@@ -17,7 +17,7 @@ code and summary for course "Big Data Training"
 >>>public void onFileCreate(File file)<br>
 >>>public void onFileChange(File file)<br>
 >>>public void onFileDelete(File file)<br>
->>>public void onDirectoryCreate(File directory)<br>  
+>>>public void onDirectoryCreate(File directory)<br>
 >>>public void onDirectoryChange(File directory)<br>
 >>>public void onDirectoryDelete(File directory)<br>
 >>>public void onStart(FileAlterationObserver observer)<br>
