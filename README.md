@@ -7,7 +7,7 @@ code and summary for course "Big Data Training"
 >(1)用Java实现实时监控目录下文件变化<br> 
 >(2)将java程序打包成exe可执行文件<br>
 
-###2.Java实现实时监控目录下文件变化<br>
+### 2.Java实现实时监控目录下文件变化<br>
 >我使用了commons-io包来实现该功能。采用的是观察者模式来实现<br>
 
 >(1)需实现功能:<br> 
