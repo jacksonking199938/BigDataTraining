@@ -15,9 +15,9 @@ code and summary for course "Big Data Training"
 >>监控文件夹的创建、删除和修改<br>
 
 >(2)实现步骤:<br>
->>i. 下载2.0以上的commnons-io包并添加到项目的build path中， maven项目可之间添加依赖<br>
+>>i. 下载2.0以上的commnons-io包并添加到项目的build path中， maven项目可直接添加依赖<br>
 
->>ii. 编写继承FileAlterationListenerAdaptor的类FileListener，主要需要重写以下方法<br>
+>>ii. 编写继承FileAlterationListenerAdaptor的类FileListener，需要重写以下方法<br>
 >>>public void onFileCreate(File file)<br>
 >>>public void onFileChange(File file)<br>
 >>>public void onFileDelete(File file)<br>
@@ -37,7 +37,8 @@ code and summary for course "Big Data Training"
 >>>具体步骤详见：https://blog.csdn.net/zhangdaiscott/article/details/46988003<br>
 
 ### 4.遇到的问题及其解决：<br>
->(1)生成的exe可执行文件出现闪退出现闪退是因为生成exe可执行文件是未注意32bit 和64bit的区别，默认生成32bit的exe文件，与系统版本不匹配，需要在Configure executable处Advanced Options选择64位。<br>
+>(1)生成的exe可执行文件出现闪退<br>
+>>出现闪退是因为生成exe可执行文件是未注意32bit 和64bit的区别，默认生成32bit的exe文件，与系统版本不匹配，需要在Configure executable处Advanced Options选择64位。<br>
 
 ### 5.总结<br>
 >了解了commons-io包的基本用法：https://blog.csdn.net/backbug/article/details/99572931。<br>
