@@ -1,4 +1,4 @@
-# BigDataTraining
+# BigDataTraining-金能征
 code and summary for course "Big Data Training"
 
 ## date: 2020/5/21<br>
