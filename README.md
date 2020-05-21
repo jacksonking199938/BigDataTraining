@@ -6,13 +6,17 @@ code and summary for course "Big Data Training"
 ### 1. 今日成果:<br>
 >(1)用Java实现实时监控目录下文件变化<br> 
 >(2)将java程序打包成exe可执行文件<br>
-2.Java实现实时监控目录下文件变化<br>
+
+###2.Java实现实时监控目录下文件变化<br>
 >我使用了commons-io包来实现该功能。采用的是观察者模式来实现<br>
+
 >(1)需实现功能:<br> 
 >>监控文件的创建、删除和修改<br>
 >>监控文件夹的创建、删除和修改<br>
+
 >(2)实现步骤:<br>
 >>i. 下载2.0以上的commnons-io包并添加到项目的build path中， maven项目可之间添加依赖<br>
+
 >>ii. 编写继承FileAlterationListenerAdaptor的类FileListener，主要需要重写以下方法<br>
 >>>public void onFileCreate(File file)<br>
 >>>public void onFileChange(File file)<br>
@@ -22,6 +26,7 @@ code and summary for course "Big Data Training"
 >>>public void onDirectoryDelete(File directory)<br>
 >>>public void onStart(FileAlterationObserver observer)<br>
 >>>public void onStop(FileAlterationObserver observer)<br>
+
 >>iii.编写main方法<br>
 >>>创建观察者对象，创建monitor<br>
 
