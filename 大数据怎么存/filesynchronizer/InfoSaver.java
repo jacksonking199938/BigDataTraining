@@ -1,4 +1,4 @@
-package listener;
+package filesynchronizer;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class InfoSaver {
 	    long s = System.currentTimeMillis(); 
 	    saver.createDocument();
 	    for (int i = 0; i < 100000; i++) {  
-	    //在这里增添您需要处理代码
+
 	    }
 	    long se = System.currentTimeMillis();
 	    System.out.println(se - s);

@@ -1,4 +1,4 @@
-package listener;
+package filesynchronizer;
 
 
 import java.io.File;
@@ -84,4 +84,3 @@ public class FileListener extends FileAlterationListenerAdaptor{
 	    monitor.start();
 	}
 }
-
