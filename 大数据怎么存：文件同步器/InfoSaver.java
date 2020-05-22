@@ -45,7 +45,7 @@ public class InfoSaver {
 	    long s = System.currentTimeMillis(); 
 	    saver.createDocument();
 	    for (int i = 0; i < 100000; i++) {  
-	    //ÔÚÕâÀïÔöÌíÄúÐèÒª´¦Àí´úÂë
+	    //åœ¨è¿™é‡Œå¢žæ·»æ‚¨éœ€è¦å¤„ç†ä»£ç 
 	    }
 	    long se = System.currentTimeMillis();
 	    System.out.println(se - s);
