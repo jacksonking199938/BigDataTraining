@@ -17,36 +17,36 @@ import org.apache.commons.io.monitor.FileAlterationObserver;
 public class FileListener extends FileAlterationListenerAdaptor{
 //	private Logger log = Logger.getLogger(FileListener.class);
 	
-//	ÎÄ¼ş´´½¨
+//	æ–‡ä»¶åˆ›å»º
 	public void onFileCreate(File file) {
-//		log.info("[ĞÂ½¨]:"+file.getAbsolutePath());
-		System.out.println("[ĞÂ½¨]:"+file.getAbsolutePath());
+//		log.info("[æ–°å»º]:"+file.getAbsolutePath());
+		System.out.println("[æ–°å»º]:"+file.getAbsolutePath());
 	}
 	
 
-//	   ÎÄ¼ş´´½¨ĞŞ¸Ä
+//	   æ–‡ä»¶åˆ›å»ºä¿®æ”¹
 	public void onFileChange(File file) {
-		System.out.println("[ĞŞ¸Ä]:" + file.getAbsolutePath());
+		System.out.println("[ä¿®æ”¹]:" + file.getAbsolutePath());
 	}
 
-//	 ÎÄ¼şÉ¾³ı
+//	 æ–‡ä»¶åˆ é™¤
 	public void onFileDelete(File file) {
-		System.out.println("[É¾³ı]:" + file.getAbsolutePath());
+		System.out.println("[åˆ é™¤]:" + file.getAbsolutePath());
 	}
 	
-//	Ä¿Â¼´´½¨
+//	ç›®å½•åˆ›å»º
 	public void onDirectoryCreate(File directory) {
-		System.out.println("[ĞÂ½¨]:" + directory.getAbsolutePath());
+		System.out.println("[æ–°å»º]:" + directory.getAbsolutePath());
 	}
 	
-//	Ä¿Â¼ĞŞ¸Ä
+//	ç›®å½•ä¿®æ”¹
 	public void onDirectoryChange(File directory) {
-		System.out.println("[ĞŞ¸Ä]:" + directory.getAbsolutePath());
+		System.out.println("[ä¿®æ”¹]:" + directory.getAbsolutePath());
 	}
 
-//	Ä¿Â¼É¾³ı
+//	ç›®å½•åˆ é™¤
 	public void onDirectoryDelete(File directory) {
-		System.out.println("[É¾³ı]:" + directory.getAbsolutePath());
+		System.out.println("[åˆ é™¤]:" + directory.getAbsolutePath());
 	}
 	
 	public void onStart(FileAlterationObserver observer) {
@@ -61,11 +61,11 @@ public class FileListener extends FileAlterationListenerAdaptor{
 	
 	public static void main(String[] args) throws Exception{
 		
-	    // ¼à¿ØÄ¿Â¼
+	    // ç›‘æ§ç›®å½•
 	    String rootDir = "E:\\cpp";
-	    // ÂÖÑ¯¼ä¸ô 5 Ãë
+	    // è½®è¯¢é—´éš” 5 ç§’
 	    long interval = TimeUnit.SECONDS.toMillis(1);
-	    // ´´½¨¹ıÂËÆ÷
+	    // åˆ›å»ºè¿‡æ»¤å™¨
 	    IOFileFilter directories = FileFilterUtils.and(
 	        FileFilterUtils.directoryFileFilter(),
 	        HiddenFileFilter.VISIBLE);
@@ -73,14 +73,14 @@ public class FileListener extends FileAlterationListenerAdaptor{
 	        FileFilterUtils.fileFileFilter(),
 	        FileFilterUtils.suffixFileFilter(".txt"));
 	    IOFileFilter filter = FileFilterUtils.or(directories, files);
-	    // Ê¹ÓÃ¹ıÂËÆ÷
+	    // ä½¿ç”¨è¿‡æ»¤å™¨
 	    FileAlterationObserver observer = new FileAlterationObserver(new File(rootDir), filter);
-	    //²»Ê¹ÓÃ¹ıÂËÆ÷
+	    //ä¸ä½¿ç”¨è¿‡æ»¤å™¨
 	    //FileAlterationObserver observer = new FileAlterationObserver(new File(rootDir));
 	    observer.addListener(new FileListener());
-	    //´´½¨ÎÄ¼ş±ä»¯¼àÌıÆ÷
+	    //åˆ›å»ºæ–‡ä»¶å˜åŒ–ç›‘å¬å™¨
 	    FileAlterationMonitor monitor = new FileAlterationMonitor(interval, observer);
-	    // ¿ªÊ¼¼à¿Ø
+	    // å¼€å§‹ç›‘æ§
 	    monitor.start();
 	}
 }
