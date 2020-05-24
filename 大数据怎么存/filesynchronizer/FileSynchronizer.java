@@ -1,9 +1,17 @@
 package filesynchronizer;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
+import org.apache.commons.io.monitor.FileAlterationObserver;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+
+import com.alibaba.fastjson.JSON;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -20,21 +28,23 @@ import com.amazonaws.services.s3.model.UploadPartRequest;
 import com.amazonaws.services.s3.model.BucketLifecycleConfiguration.Rule;
 
 
-public class FileSynchronizer {
+public class FileSynchronizer  extends FileAlterationListenerAdaptor{
 //	private final static String bucketName = "jacksonkim";
 //	private final static String accessKey = "08C49C332E0DEBEE4151";
 //	private final static String secretKey = "W0Y0MTUwNjY0Q0I1RjM0MkQ2QzA1NTUyQUMyNzM2QzFFMEVGRjEyQTBd";
 //	private final static String serviceEndpoint = "http://scuts3.depts.bingosoft.net:29999";
 //	private final static String signingRegion = "";
-	private static long partSize = 20<<20;
-	private static String bucketName;
-	private static BasicAWSCredentials credentials;
-	private static ClientConfiguration ccfg;
-	private static EndpointConfiguration endpoint;
-	private static AmazonS3 s3;
+	private static long partSize = 5<<20;
+	private Document document;
+	private String bucketName;
+	private BasicAWSCredentials credentials;
+	private ClientConfiguration ccfg;
+	private EndpointConfiguration endpoint;
+	private AmazonS3 s3;
 	
-	public FileSynchronizer(String bucketName, String accessKey, String secretKey,
+	public FileSynchronizer(Document document, String bucketName, String accessKey, String secretKey,
 			String serviceEndpoint, String signingRegion) {
+		this.document = document;
 		this.bucketName = bucketName;
 		this.credentials = new BasicAWSCredentials(accessKey, secretKey);
 		this.ccfg = new ClientConfiguration().withUseExpectContinue(false);
@@ -46,23 +56,32 @@ public class FileSynchronizer {
 				.withEndpointConfiguration(endpoint).withPathStyleAccessEnabled(true).build();
 	}
 	
-	public void createFile(File file) {
+	public void multipartUpload(File file,String uploadId,long filePosition, 
+			int partNum, ArrayList<PartETag> partETags) {
 		String keyName = Paths.get(file.getAbsolutePath()).getFileName().toString();
 		// Create a list of UploadPartResponse objects. You get one of these
         // for each part upload.
-		ArrayList<PartETag> partETags = new ArrayList<PartETag>();
+//		ArrayList<PartETag> partETags = new ArrayList<PartETag>();
+		if((partNum-1)*partSize < filePosition) {
+			partNum ++ ;
+		}
 		long contentLength = file.length();
-		String uploadId = null;
+//		String uploadId = null;
 		try {
 			// Step 1: Initialize.
-			InitiateMultipartUploadRequest initRequest = 
-					new InitiateMultipartUploadRequest(bucketName, keyName);
-			uploadId = s3.initiateMultipartUpload(initRequest).getUploadId();
+			if(uploadId == "") {
+				InitiateMultipartUploadRequest initRequest = 
+						new InitiateMultipartUploadRequest(bucketName, keyName);
+				uploadId = s3.initiateMultipartUpload(initRequest).getUploadId();
+			}
 			System.out.format("Created upload ID was %s\n", uploadId);
-			
+			if(partETags == null) {
+				partETags = new ArrayList<PartETag>();
+			}
+
 			// Step 2: Upload parts.
-			long filePosition = 0;
-			for (int i = 1; filePosition < contentLength; i++) {
+//			long filePosition = 0;
+			for (int i = partNum; filePosition < contentLength;i++) {
 				// Last part can be less than 5 MB. Adjust part size.
 				partSize = Math.min(partSize, contentLength - filePosition);
 
@@ -79,16 +98,17 @@ public class FileSynchronizer {
 				// Upload part and add response to our list.
 				System.out.format("Uploading part %d\n", i);
 				partETags.add(s3.uploadPart(uploadRequest).getPartETag());
-
 				filePosition += partSize;
+				partNum++;
+				saveUploadInfo(file.getAbsolutePath(),uploadId, filePosition, partNum, partETags);
 			}
 
 			// Step 3: Complete.
 			System.out.println("Completing upload");
 			CompleteMultipartUploadRequest compRequest = 
 					new CompleteMultipartUploadRequest(bucketName, keyName, uploadId, partETags);
-
 			s3.completeMultipartUpload(compRequest);
+			deleteUploadInfo(uploadId);
 		} catch (Exception e) {
 			System.err.println(e.toString());
 			if (uploadId != null && !uploadId.isEmpty()) {
@@ -99,6 +119,64 @@ public class FileSynchronizer {
 			System.exit(1);
 		}
 		System.out.println("Done!");
+	}
+	
+	
+	private void saveUploadInfo(String fileName, String uploadId,long filePosition,
+			int partNum, ArrayList<PartETag> partETags) {
+		// save necessary information when interruption occurs  
+		// and load them to continue when the program restart 
+		try {
+			System.out.println("[INFO]:saving xml to disk");
+			Element root;
+			if(this.document.hasContent())
+			{
+				root = this.document.getRootElement();
+			}
+			else {
+				root = this.document.addElement("root");
+			}
+			
+			Element unfinishedTask = root.addElement("unfinishedTask");
+			unfinishedTask.addElement("uploadId")
+					.addText(uploadId);	
+			unfinishedTask.addElement("filePath")
+					.addText(fileName);
+			unfinishedTask.addElement("filePosition")
+					.addText(String.valueOf(filePosition));
+			unfinishedTask.addElement("partNum")
+					.addText(String.valueOf(partNum));
+			unfinishedTask.addElement("partETags").addText(JSON.toJSONString(partETags));
+			String filePath = System.getProperty("user.dir");
+			System.out.println(filePath);
+			FileWriter out = new FileWriter(filePath+"\\foo.xml");
+			this.document.write(out);
+			out.close();
+			
+		} catch (Exception e) {
+			System.out.println(e.toString());
+			// TODO: handle exception
+		}
+	}
+	
+	
+	private void deleteUploadInfo(String uploadId) {
+		try {
+			Element root = this.document.getRootElement();
+			for(Element element: root.elements()) {
+				if(element.elementText("uploadId")==uploadId)
+					root.remove(element);
+			}
+			String filePath = System.getProperty("user.dir");
+			System.out.println(filePath);
+			FileWriter out = new FileWriter(filePath+"\\foo.xml");
+			this.document.write(out);
+			out.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.toString());
+		}
+		
 	}
 	
 	
