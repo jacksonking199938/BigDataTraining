@@ -2,13 +2,7 @@ package filesynchronizer;
 
 
 import java.io.File;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.HiddenFileFilter;
-import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
-import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 
 
@@ -17,11 +11,15 @@ public class FileListener extends FileAlterationListenerAdaptor{
 	public FileListener(FileSynchronizer fileSynchronizer) {
 		this.fileSynchronizer = fileSynchronizer;
 	}
-	
+
 //	文件创建
 	public void onFileCreate(File file) {
 		System.out.println("[新建]:"+file.getAbsolutePath());
-		fileSynchronizer.multipartUpload(file, "", 0, 1, null);
+		if(file.length() > fileSynchronizer.getMaxSize())
+			fileSynchronizer.multipartUpload(file, "", 0, 1, null);
+		else {
+			fileSynchronizer.simpleUpload(file);
+		}
 	}
 	
 

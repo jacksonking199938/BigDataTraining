@@ -36,8 +36,7 @@ import com.alibaba.fastjson.JSONArray;
 
 public class Test {
 	private final static String bucketName = "jacksonkim";
-//	private final static String keyName   = "�½��ı��ĵ�.txt";
-//	private final static String savePath   = "D:\\ACoder\\AllProject\\JavaProject";
+
 	private final static String accessKey = "08C49C332E0DEBEE4151";
 	private final static String secretKey = "W0Y0MTUwNjY0Q0I1RjM0MkQ2QzA1NTUyQUMyNzM2QzFFMEVGRjEyQTBd";
 	private final static String serviceEndpoint = "http://scuts3.depts.bingosoft.net:29999";
@@ -73,7 +72,7 @@ public class Test {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		FileSynchronizer synchronizer = new FileSynchronizer(document, bucketName,
+		FileSynchronizer synchronizer = new FileSynchronizer(bucketName,
 				accessKey, secretKey, serviceEndpoint, signingRegion);
 		synchronizer.multipartUpload(new File("E:\\cpp\\新建文本文档.txt"), "", 0, 1, null);
 //		Element root = document.getRootElement();
@@ -258,4 +257,52 @@ public class Test {
 		});
 	}
 	*/
+	/*
+	 * private static void checkUnfinished2() {
+		String xmlPath = System.getProperty("user.dir")+"\\foo.xml";
+		File file = new File(xmlPath);
+		try {
+			if(!file.exists() || file.length() < 1) {
+				file.createNewFile();
+				document = DocumentHelper.createDocument();
+				document.addElement("root");
+			}
+			else {
+				SAXReader reader = new SAXReader();
+				document = reader.read(file);
+			}	
+		} catch (DocumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		FileSynchronizer synchronizer = new FileSynchronizer(bucketName,
+				accessKey, secretKey, serviceEndpoint, signingRegion);
+		Element root = document.getRootElement();
+		if(root.hasContent()) {
+			long filePosition = 0;
+			int partNum = 1;
+			ArrayList<PartETag> partETags = null;
+			String uploadId = "";
+			String filePath = "";
+			for(Element task:root.elements())
+			{
+				uploadId = task.elementText("uploadId");
+				filePath = task.elementText("filePath");
+				filePosition = Long.valueOf(task.elementText("filePosition").toString());
+				partNum  = Integer.valueOf(task.elementText("partNum").toString());
+				if(task.elementText("partETags") != "null" && uploadId != "")
+					partETags = (ArrayList<PartETag>) JSONArray.parseArray(task.elementText("partETags"), PartETag.class);
+				else {
+					partETags = new ArrayList<PartETag>();
+				}
+				synchronizer.multipartUpload(new File(filePath), 
+						uploadId, filePosition, partNum, partETags);
+			}
+		}
+	}
+	*/
+
 }
