@@ -1,12 +1,21 @@
 package filesynchronizer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
+
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
@@ -14,13 +23,19 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.AbortMultipartUploadRequest;
 import com.amazonaws.services.s3.model.CompleteMultipartUploadRequest;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.GetObjectAclRequest;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.PartETag;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.model.UploadPartRequest;
 
 
 public class FileSynchronizer extends FileAlterationListenerAdaptor{
-	private final long maxPartSize = 5<<20;
+	private final long maxPartSize = 20<<20;
 	private final int maxLoop = 3;
 	private String bucketName;
 	private BasicAWSCredentials credentials;
@@ -49,11 +64,12 @@ public class FileSynchronizer extends FileAlterationListenerAdaptor{
 			int partNum, ArrayList<PartETag> partETags) {
 		// 分块传输函数
 		long partSize = this.maxPartSize;
-		String keyName = "";
+		// Step0: get the file name
+		String keyName = file.getAbsolutePath()
+				.replace(Main.getRootDir()+"\\", "")
+				.replace("\\", "/");
 		for(int k=0;k<this.maxLoop;k++) {
 			try {
-				// Step0: get the file name
-				keyName = Paths.get(file.getAbsolutePath()).getFileName().toString();
 				if((partNum-1)*this.maxPartSize < filePosition) {
 					partNum ++ ;
 				}
@@ -94,7 +110,7 @@ public class FileSynchronizer extends FileAlterationListenerAdaptor{
 //					saveUploadInfo(file.getAbsolutePath(),uploadId, filePosition, partNum, partETags);
 					InfoSaver.saveInfo(file.getAbsolutePath(), uploadId, filePosition, partNum, partETags);
 				}
-	
+
 				// Step 3: Complete.
 				System.out.println("Completing upload");
 				CompleteMultipartUploadRequest compRequest = 
@@ -122,26 +138,169 @@ public class FileSynchronizer extends FileAlterationListenerAdaptor{
 //				System.exit(1);
 			}
 		}
-		System.out.println("Done!");
+		System.out.println("Uploading Done!");
 	}
 	
 	
 	public void simpleUpload(File file) {
 		// 简单传输，不用分块传输
+		String keyName = file.getAbsolutePath()
+				.replace(Main.getRootDir()+"\\", "")
+				.replace("\\", "/");
 		for(int k=0;k<this.maxLoop;k++) {
 			try {
-				
-				String keyName = Paths.get(file.getAbsolutePath()).getFileName().toString();
-				s3.putObject(bucketName,keyName,file.getAbsolutePath());
+				s3.putObject(bucketName,keyName,file);
+				System.out.println("Uploading Done!");
 				return;
 			}catch (Exception e) {
 				System.err.println(e.toString());
-				System.out.println("[Info]:retreive again");
+				System.out.println("[INFO]:retreive again");
 			}
 		}
-		System.out.println("[Info]:sorry network interuption may occur, a simple restart may help!");
+		System.out.println("[INFO]:network error, restart may help!");
+	}
+	
+	
+	
+	public void multipartDownload(String keyName, long filePosition) {
+		// 分块下载函数
+		try {
+	        long length = s3.getObjectMetadata(bucketName, keyName).getContentLength();
+	        RandomAccessFile raf = new RandomAccessFile(
+	        		new File(Main.getRootDir() + "\\"+ keyName), "rw");
+	        raf.seek(filePosition);
+	        System.out.format("[INFO]: Downloading %s from position %s \n", keyName, filePosition);
+	        // 判断是否大于最大分块大小
+	        if(length > this.maxPartSize) {
+	        	// 分块下载
+		        for(long i=filePosition;i<length; i+=this.maxPartSize) {
+		        	System.out.println(String.format("%s\t%s",filePosition, length));
+		        	// 发起请求
+		        	GetObjectRequest request = new GetObjectRequest(bucketName, keyName);
+		        	long newPosition = Math.min(length, i+this.maxPartSize);
+		        	request.setRange(i, newPosition);
+		        	InputStream inputStream = s3.getObject(request).getObjectContent();
+	            	byte [] read_buf = new byte[64*1024];
+	            	int read_len=0;
+	            	// 保存文件
+	            	while((read_len=inputStream.read(read_buf))>0){
+	            		raf.write(read_buf,0,read_len);
+	            	}
+	            	filePosition = newPosition;
+	            	InfoSaver.saveDownloadInfo(keyName, filePosition);
+		        }
+		        InfoSaver.delDownLoadInfo(keyName);
+	        }
+	        // 一次下载完成
+	        else {
+	        	InputStream inputStream = s3.getObject(bucketName, keyName).getObjectContent();
+	        	byte [] read_buf = new byte[64*1024];
+            	int read_len=0;
+            	while((read_len=inputStream.read(read_buf))>0){
+            		raf.write(read_buf,0,read_len);
+            	}
+	        }
+	        raf.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Downloading Done!");
+	}
+	
+	
+	public void deleteFile(File file) {
+		String keyName = file.getAbsolutePath()
+				.replace(Main.getRootDir()+"\\", "")
+				.replace("\\", "/");
+		for(int k=0;k<this.maxLoop;k++) {
+			try {
+		            s3.deleteObject(new DeleteObjectRequest(bucketName, keyName));
+		            System.out.println("Deleting Done");
+		            return;
+		    } catch (AmazonServiceException e) {
+	        // The call was transmitted successfully, but Amazon S3 couldn't process 
+	        // it, so it returned an error response.
+	            e.printStackTrace();
+	        } catch (SdkClientException e) {
+	            // Amazon S3 couldn't be contacted for a response, or the client
+	            // couldn't parse the response from Amazon S3.
+	            e.printStackTrace();
+	        }
+		}
+		System.out.println("[INFO]:network error, restart may help!");
 	}
 	
 	
 
+	public void createDirectory(File directory) {
+		// 创建一个空目录
+		String keyName = directory.getAbsolutePath()
+				.replace(Main.getRootDir()+"\\", "")
+				.replace("\\", "/");
+		for(int k=0; k<this.maxLoop; k++) {
+			try {
+					s3.putObject(bucketName, keyName+"/", "");
+		            System.out.println("Creating Done!");
+		            return;
+		    } catch (AmazonServiceException e) {
+	        // The call was transmitted successfully, but Amazon S3 couldn't process 
+	        // it, so it returned an error response.
+	            e.printStackTrace();
+	        } catch (SdkClientException e) {
+	            // Amazon S3 couldn't be contacted for a response, or the client
+	            // couldn't parse the response from Amazon S3.
+	            e.printStackTrace();
+	        }
+		}
+		System.out.println("[INFO]:network error, restart may help!");
+	}
+	
+	public void deleteDirectory(File directory) {
+		// 删除一个空目录
+		String keyName = directory.getAbsolutePath()
+				.replace(Main.getRootDir()+"\\", "")
+				.replace("\\", "/");
+		for(int k=0; k<this.maxLoop; k++) {
+			try {
+		            s3.deleteObject(new DeleteObjectRequest(bucketName, keyName+"/"));
+		            System.out.println("Deleting Done!");
+		            return;
+		    } catch (AmazonServiceException e) {
+	        // The call was transmitted successfully, but Amazon S3 couldn't process 
+	        // it, so it returned an error response.
+	            e.printStackTrace();
+	        } catch (SdkClientException e) {
+	            // Amazon S3 couldn't be contacted for a response, or the client
+	            // couldn't parse the response from Amazon S3.
+	            e.printStackTrace();
+	        }
+		}
+		System.out.println("[INFO]:network error, restart may help!");
+	}
+	
+	public List<String> getObjectsKey(){
+		// 获取文件对象们的KeyName
+		ObjectListing objectList = s3.listObjects(bucketName);
+		List<S3ObjectSummary> summaries = objectList.getObjectSummaries();
+		List<String> objectsKey = new ArrayList<String>(summaries.size());
+		for(S3ObjectSummary summary:summaries) {
+			objectsKey.add(summary.getKey());
+		}
+		return objectsKey;
+	}
+	
+	public List<Long> getObjectsSize(){
+		// 获取文件对象们的大小
+		ObjectListing objectList = s3.listObjects(bucketName);
+		List<S3ObjectSummary> summaries = objectList.getObjectSummaries();
+		List<Long> objectsSize = new ArrayList<Long>(summaries.size());
+		for(S3ObjectSummary summary:summaries) {
+			objectsSize.add(summary.getSize());
+			
+		}
+		return objectsSize;
+	}
+		
 }
+

@@ -1,10 +1,12 @@
 package filesynchronizer;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -52,29 +54,16 @@ public class Test {
 //		saveRunningInfo();
 //	}
 	public static void main(String[] args) {
-		String xmlPath = System.getProperty("user.dir")+"\\foo.xml";
-		System.out.println(xmlPath);
-		File file = new File(xmlPath);
-		try {
-			if(!file.exists() || file.length() < 1) {
-				file.createNewFile();
-				document = DocumentHelper.createDocument();
-				document.addElement("root");
-			}
-			else {
-				SAXReader reader = new SAXReader();
-				document = reader.read(file);
-			}	
-		} catch (DocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
+
 		FileSynchronizer synchronizer = new FileSynchronizer(bucketName,
 				accessKey, secretKey, serviceEndpoint, signingRegion);
-		synchronizer.multipartUpload(new File("E:\\cpp\\新建文本文档.txt"), "", 0, 1, null);
+//		synchronizer.simpleUpload(new File("E:\\cpp\\新建文本文档.txt"));
+//		synchronizer.multipartDownload("googleearth.zip", 0);
+		Main.checkUnfinishedDownload(synchronizer);
+//		synchronizer.simpleUpload(file);
+//		for(String keyName: synchronizer.getObjectsKey()) {
+//			System.out.println(keyName);
+//		}
 //		Element root = document.getRootElement();
 //		long filePosition = 0;
 //		int partNum = 1;

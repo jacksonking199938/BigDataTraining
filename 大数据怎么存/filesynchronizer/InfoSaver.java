@@ -10,22 +10,23 @@ import com.alibaba.fastjson.JSONObject;
 import com.amazonaws.services.s3.model.PartETag;
 
 public class InfoSaver {
-	public static JSONObject myjson = new JSONObject();
+	public static JSONObject uploadJson = new JSONObject();
+	public static JSONObject downloadJson = new JSONObject();
 	
 	public static void saveInfo(String fileName, String uploadId,long filePosition,
 			int partNum, ArrayList<PartETag> partETags) {
 		try {
 			System.out.println("[INFO]:saving info json to disk");
 			JSONObject tempjson = new JSONObject();
-			tempjson.put("filename", fileName);
+			tempjson.put("filePath", fileName);
 			tempjson.put("filePosition", filePosition);
 			tempjson.put("partNum", partNum);
 			tempjson.put("partETags", partETags);
-			myjson.put(uploadId, tempjson);
-			String filePath = System.getProperty("user.dir")+"\\foo.json";
+			uploadJson.put(uploadId, tempjson);
+			String filePath = System.getProperty("user.dir")+"\\upload.json";
 			OutputStreamWriter writer = new OutputStreamWriter(new 
 					FileOutputStream(filePath),"UTF-8");
-			writer.write(myjson.toJSONString());
+			writer.write(uploadJson.toJSONString());
 			writer.close();
 		} catch (Exception e) {
 			System.out.println(e.toString());
@@ -33,13 +34,13 @@ public class InfoSaver {
 	}
 	
 	public static void deleteInfo(String uploadId) {
-		myjson.remove(uploadId);
-		String filePath = System.getProperty("user.dir")+"\\foo.json";
+		uploadJson.remove(uploadId);
+		String filePath = System.getProperty("user.dir")+"\\upload.json";
 		OutputStreamWriter writer;
 		try {
 			writer = new OutputStreamWriter(new 
 					FileOutputStream(filePath),"UTF-8");
-			writer.write(myjson.toJSONString());
+			writer.write(uploadJson.toJSONString());
 			writer.close();
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
@@ -55,6 +56,42 @@ public class InfoSaver {
 	}
 	
 	
+	public static void saveDownloadInfo(String fileName, long filePosition) {
+		try {
+			System.out.println("[INFO]:saving info json to disk");
+			JSONObject tempjson = new JSONObject();
+			tempjson.put("filePosition", filePosition);
+			downloadJson.put(fileName, tempjson);
+			String filePath = System.getProperty("user.dir")+"\\download.json";
+			OutputStreamWriter writer = new OutputStreamWriter(new 
+					FileOutputStream(filePath),"UTF-8");
+			writer.write(downloadJson.toJSONString());
+			writer.close();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		}
+	}
+	
+	public static void delDownLoadInfo(String fileName) {
+		downloadJson.remove(fileName);
+		String filePath = System.getProperty("user.dir")+"\\download.json";
+		OutputStreamWriter writer;
+		try {
+			writer = new OutputStreamWriter(new 
+					FileOutputStream(filePath),"UTF-8");
+			writer.write(downloadJson.toJSONString());
+			writer.close();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	//以下为历史版本，暂时保存
 //	private void saveUploadInfo(String fileName, String uploadId,long filePosition,
 //			int partNum, ArrayList<PartETag> partETags) {
