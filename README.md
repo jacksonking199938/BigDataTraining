@@ -1,6 +1,18 @@
 # BigDataTraining-金能征
 code and summary for course "Big Data Training"
 
+## date:2020/5/28
+### 1.今日成果
+(1)初试spark进行字频统计<br>
+(2)学习spark.rdd的使用<br>
+(3)操作使用reduce方法实现求和<br>
+### 2.spark rdd的使用
+详见https://www.cnblogs.com/sharpxiajun/p/5506822.html
+### 3.问题及结局
+遇到错误：Could not locate executable null\bin\winutils.exe in the Hadoop binaries<br>
+解决方法:Hadoop都是运行在Linux系统下的，在windows下eclipse中运行mapreduce程序，要首先安装Windows下运行的支持插件<br>
+>详见：[Could not locate executable null\bin\winutils.exe in the Hadoop binaries解决方式](https://blog.csdn.net/weixin_41122339/article/details/81141913?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase)
+
 ## date:2020/5/27
 ### 1.今日成果
 (1)了解了大数据的获取、存储和计算的计算体系<br>
