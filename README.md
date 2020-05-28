@@ -2,9 +2,6 @@
 code and summary for course "Big Data Training"
 
 ## date:2020/5/26
-
-
-##date:2020/5/26
 ### 1.今日成果
 >(1)完成了文件同步器中断任务检查和一致性检查<br>
 >(2)完成用户交互的功能<br>
@@ -76,7 +73,7 @@ code and summary for course "Big Data Training"
 ### 2.问题及解决
 >暂无遇到太大问题
 
-##date:2020/5/25
+## date:2020/5/25
 ### 1.今日成果
 >(1)完成了文件同步器分块下载的功能<br>
 >(2)将xml配置文件替换成json配置文件，更方便操作<br>
