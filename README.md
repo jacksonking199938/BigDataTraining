@@ -1,6 +1,31 @@
 # BigDataTraining-金能征
 code and summary for course "Big Data Training"
 
+## date:2020/5/29
+### 1.今日成果
+(1)进一步了解spark和greenPlum的区别<br>
+(2)完成课程拓展题
+
+### 2. spark和greenPlum的区别
+根据上一节的学习，我们知道spark和greenPlum都属于大数据计算的工具或者是计算框架。
+spark和greenPlum的重要区别是它们依赖的底层架构是不一样的
+spark是基于hadoop的，而greenPlum是基于MPP的。理论上MPPDB与Hadoop都是将运算分布到节点中独立运算后进行结果合并(分布式计算)，但由于依据的理论和采用的技术路线不同而有各自的优缺点和适用范围。两种技术以及传统数据库技术的对比如下：
+特征|Hadoop|MPPDB|传统数据仓库
+:---:|:----:|:----:|:---:
+平台开放性|高|低|低
+运维负责度|高|中|中
+扩展能力|高|中|低
+拥有成本|低|中|高
+系统和数据管理成本|高|中|中
+应用开发维护成本|高|中|中
+SQL支持|中(低)|高|高
+数据规模|PB级别|部分PB|TB级别
+计算性能|对非关系型操作效率高|对关系型操作效率高|对关系型操作效率中
+数据结构|机构化、半结构化和非机构化数据|结构化数据|结构化数据
+
+原文链接：https://blog.csdn.net/qq_42189083/article/details/80610092
+
+
 ## date:2020/5/28
 ### 1.今日成果
 (1)初试spark进行字频统计<br>
@@ -14,7 +39,7 @@ code and summary for course "Big Data Training"
 >详见：[Could not locate executable null\bin\winutils.exe in the Hadoop binaries解决方式](https://blog.csdn.net/weixin_41122339/article/details/81141913?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase)
 
 ## date:2020/5/27
-### 1.今日成果
+### 1.今日成果v
 (1)了解了大数据的获取、存储和计算的计算体系<br>
 * 数据来源有：
   
