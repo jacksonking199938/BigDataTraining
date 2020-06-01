@@ -1,6 +1,29 @@
 # BigDataTraining-金能征
 code and summary for course "Big Data Training"
 
+## date:2020/6/1
+
+### 1.今日成果
+(1)完成了课内实操题和课外拓展题
+(2)学习了sql和高级程序语言结合的方法
+(3)学习了通过较为复杂的sql完成相关业务
+(4)学会了使用不同计算框架对不同阶段的数据进行计算
+(5)学习了使用spark之后计算数据的ETL操作
+
+### 2.为什么Spark的应用场景不适合高并发、和实时读写？
+spark是一个分布式计算框架， 从他的作业调度可以看到http://spark.apache.org/docs/latest/job-scheduling.html，它的资源分配粒度很粗，CPU的核数进行分配的，集群的CPU资源是有限的，同时spark sql资源计算时需要把大量数据加载到内存中，需要消耗集群大量的内存资源，再做shuffle的时候，又需要消耗大量的网络IO和磁盘IO, 如果同时多个job执行，那么每个job获得资源要么少，要么需要排队。而不能像关系型数据库那么提供高并发的服务。
+
+所以我们将数据计算完之后，需要导出到合适实时读取的数据库中。
+
+### 3.问题及解决：
+(1)遇到toDF can not be resolve的问题
+
+解决：遗漏了import sparkclient._语句
+
+(2)登录mysql主机上出现错误
+
+解决：主要是格式问题，如空格
+
 ## date:2020/5/29
 ### 1.今日成果
 (1)进一步了解spark和greenPlum的区别<br>
