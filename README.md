@@ -4,6 +4,74 @@ code and summary for course "Big Data Training"
 ## date:2020/6/1
 
 ### 1.今日成果
+(1)学习了大数据流式计算
+
+(2)完善了大数据离线计算的课外拓展题
+
+(3)学习了springboot框架，为大数据离线计算作业做铺垫
+
+(4)学习了spark rdd 的操作
+
+### 2. rdd中常见操作
+(1)map
+对RDD中的每个元素都执行一个指定的函数来产生一个新的RDD。任何原RDD中的元素在新RDD中都有且只有一个元素与之对应。
+
+举例：
+
+scala> val a = sc.parallelize(1 to 9, 3)
+
+scala> val b = a.map(x => x*2)
+
+scala> a.collect
+
+res10: Array[Int] = Array(1, 2, 3, 4, 5, 6, 7, 8, 9)
+
+scala> b.collect
+
+res11: Array[Int] = Array(2, 4, 6, 8, 10, 12, 14, 16, 18)
+
+(2)flatMap
+
+与map类似，区别是原RDD中的元素经map处理后只能生成一个元素，而原RDD中的元素经flatmap处理后可生成多个元素来构建新RDD。
+
+举例：对原RDD中的每个元素x产生y个元素（从1到y，y为元素x的值）
+
+scala> val a = sc.parallelize(1 to 4, 2)
+
+scala> val b = a.flatMap(x => 1 to x)
+
+scala> b.collect
+
+res12: Array[Int] = Array(1, 1, 2, 1, 2, 3, 1, 2, 3, 4,1,2,3,4)
+
+(3)reduceByKey
+
+顾名思义，reduceByKey就是对元素为KV对的RDD中Key相同的元素的Value进行reduce，因此，Key相同的多个元素的值被reduce为一个值，然后与原RDD中的Key组成一个新的KV对。
+
+举例:
+
+scala> val a = sc.parallelize(List((1,2),(3,4),(3,6)))
+
+scala> a.reduceByKey((x,y) => x + y).collect
+
+res7: Array[(Int, Int)] = Array((1,2), (3,10))
+
+上述例子中，对Key相同的元素的值求和，因此Key为3的两个元素被转为了(3,10)。
+
+
+### 3.问题及解决：
+
+(1) 在实操8中遇到驱动器不匹配的问题
+
+将com.jdbc.mysql.Driver 替换为org.postgresql.Driver
+
+(2) 遇到内网无法解析greenplum域名的问题
+
+使用老师提供的IP和端口即可成功运行
+
+## date:2020/6/1
+
+### 1.今日成果
 (1)完成了课内实操题和课外拓展题
 
 (2)学习了sql和高级程序语言结合的方法
