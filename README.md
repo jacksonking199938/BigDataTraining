@@ -1,7 +1,7 @@
 # BigDataTraining-金能征
 code and summary for course "Big Data Training"
 
-## date:2020/6/1
+## date:2020/6/2
 
 ### 1.今日成果
 (1)学习了大数据流式计算
