@@ -1,6 +1,21 @@
 # BigDataTraining-金能征
 code and summary for course "Big Data Training"
 
+## date:2020/6/3
+### 1.今日成果
+(1)在springboot项目中配置spark开发环境
+
+(2)学习了层次分析法
+
+(3)完成第二次作业中的信息配置的后端开发
+
+### 2.问题及解决
+(1) 再导入spark相关依赖后虚拟机在加载类时出现问题
+
+原因：在网上调查后察觉到有可能是jackson-databind包版本与springboot不对应的关系。
+
+解决：一开始按网上将该包的版本改为6.9.5，发现仍报错，最终将该包的版本改为最新版6.11.0，能成功运行，并连接到spark主机。
+
 ## date:2020/6/2
 
 ### 1.今日成果
