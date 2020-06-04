@@ -1,5 +1,56 @@
 # BigDataTraining-金能征
 code and summary for course "Big Data Training"
+## date:2020/6/3
+### 1.今日成果
+(1)完成第二次作业中的sparksql查询的后端开发
+
+(2)对已完成的后端功能进行测试
+
+(3)学习了java中HttpSession的原理和使用
+
+### 2.session和cookie的区别
+(1)cookie数据存放在客户的浏览器上，session数据放在服务器上。
+
+(2)cookie不是很安全，别人可以分析存放在本地的cookie并进行cookie欺骗，考虑到安全应当使用session。
+
+(3)session会在一定时间内保存在服务器上。当访问增多，会比较占用你服务器的性能，考虑到减轻服务器性能方面，应当使用cookie。
+
+(4)单个cookie保存的数据不能超过4K，很多浏览器都限制一个站点最多保存20个cookie。
+
+(4)可以考虑将登陆信息等重要信息存放为session，其他信息如果需要保留，可以放在cookie中。
+
+### 3. HttpSession的使用
+Session机制：
+
+(1)session机制采用的是在服务器端保持 HTTP 状态信息的方案 。
+
+(2)当程序需要为某个客户端的请求创建一个session时，服务器首先检查这个客户端的请求里是否包含了一个session标识(即sessionId),如果已经包含一个sessionId则说明以前已经为此客户创建过session，服务器就按照session id把这个session检索出来使用(如果检索不到，可能会新建一个，这种情况可能出现在服务端已经删除了该用户对应的session对象，但用户人为地在请求的URL后面附加上一个JSESSION的参数)。如果客户请求不包含sessionId，则为此客户创建一个session并且生成一个与此session相关联的sessionId，这个session id将在本次响应中返回给客户端保存。
+
+(3)方法：
+
+--获取Session 对象：
+
+request.getSession()， request.getSession(boolean Create);
+
+--属性相关的：
+
+getAttribute()、setAttribute()、removeAttribute()
+
+--使HttpSession 失效：
+
+invalidate()
+
+--设置其最大时效：
+
+setMaxInactiveInterval()
+
+(4)url 重写：它允许不支持Cookie的浏览器也可以与WEB服务器保持连续的会话。将会话标识号以参数形式附加在超链接的URL地址后面的技术称为URL重写。
+
+<%= response.encodeURL("login.jsp")%>
+参考资料：https://www.cnblogs.com/daoxiaobai/p/6275524.html
+
+### 问题及解决
+今天暂时没有遇到大的问题
 
 ## date:2020/6/3
 ### 1.今日成果
