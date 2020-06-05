@@ -1,6 +1,17 @@
 # BigDataTraining-金能征
 code and summary for course "Big Data Training"
-## date:2020/6/3
+
+
+## data:2020/6/5
+### 1.今日成果
+(1)完成了后端查询数据库表、表字段的功能
+
+(2)开始测试前后端功能
+### 2.问题与解决
+暂无遇到太大问题
+
+
+## date:2020/6/4
 ### 1.今日成果
 (1)完成第二次作业中的sparksql查询的后端开发
 
