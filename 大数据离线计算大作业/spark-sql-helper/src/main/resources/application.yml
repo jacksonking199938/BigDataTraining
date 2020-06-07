@@ -1,0 +1,9 @@
+
+spring:
+  datasource:
+    name: test  # 数据库名
+    url: jdbc:mysql://localhost:3306/test?serverTimezone=UTC #url
+    username: root  #用户名
+    password: king1398  #密码
+    driver-class-name: com.mysql.cj.jdbc.Driver  #驱动器
+    

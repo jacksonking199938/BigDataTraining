@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <!--首先完成移动端的预览设置问题,设备的宽度初始缩放倍数为1.0倍，这里还可以设置用户禁止缩放等等-->
+    <meta name="viewport" content="device-width,initial-scale=1.0">
+    <title>spark sql helper</title>
+    <!--接下来进行semanticUI的css CDN的引用-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <!--引入我们自己写的css-->
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+
+</head>
+<body>
+<div class="root">
+    <div class="connectArea">
+        <div class="ui input padding">
+            <input id="url" type="text" placeholder="url...">
+        </div>
+        <div class="ui input padding">
+            <input id="user" type="text" placeholder="用户名...">
+        </div>
+        <div class="ui input padding">
+            <input id="password" type="text" placeholder="密码...">
+        </div>
+        <button class="ui primary button" id="connect" onclick="connect()">
+            连接
+        </button>
+    </div>
+    <div class="workArea">
+        <div class="elementArea" id="elementArea">
+            <div th:fragment="elementArea">
+            <div class="ui one blue item menu">
+                <a class="item">
+                    元素区
+                </a>
+            </div>
+            <div class="ui list" th:each="database:${databases}">
+                <div class="item">
+                    <i class="database icon"></i>
+                    <div class="content">
+                        <div class="header" th:text="${database.name}"></div>
+                        <div class="list" th:each="table:${database.tables}">
+                            <div class="item"  id="table">
+                            <i class="table icon"></i>
+                            <div class="content">
+                                <div class="header" th:text="${table.name}"></div>
+                                <div class="list" th:each="column:${table.columns}">
+                                    <div class="item">
+                                    <i class="columns icon"></i>
+                                    <div class="content">
+                                        <div class="header" th:text="${column}"></div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="rightArea">
+            <div class="headPanel">
+                <div class="ui green three item menu" style="width:70%;">
+                    <a class="item" id="site">
+                        url:null
+                    </a>
+                    <a class="item" id="currentDB">
+                        current database:null
+                    </a>
+                    <a class="item">
+                        public
+                    </a>
+                </div>
+<!--                <div class="width:50%">-->
+<!--                    <img src="../static/image/play.png" class="image1">-->
+<!--                </div>-->
+                <button class="ui primary button" style="margin-bottom:12px;margin-left:40px;" onclick="execute()">
+                    执行
+                </button>
+            </div>
+            <div class="sqlPanel">
+                <textarea id="sqlInput" placeholder="在此输入sql语句" class="textArea"></textarea>
+            </div>
+
+            <div>
+                <h4 class="ui header" >
+                    <i class="book icon"></i>
+                    <div class="content">
+                        查询结果
+                    </div>
+                </h4>
+            </div>
+            <div class="resultPanel">
+                <div th:fragment="result">
+                <table class="ui selectable celled table" >
+                    <thead>
+                    <tr>
+                        <div th:each="columnName:${columnNames}">
+                        <th th:text="${columnName}"></th>
+                        </div>
+                    </tr>
+                    </thead>
+                    <tbody th:each="row:${data}">
+                    <tr>
+                        <div th:each="segment:${row}">
+                        <td th:text="${segment}"></td>
+                        </div>
+                    </tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/jquery-1.12.0.min.js}"></script>
+<script th:src="@{/js/auto-line-number.js}"></script>
+<script type="text/javascript">
+    function connect(){
+        alert("确定连接吗？操作可能需要几秒钟");
+        $("#elementArea").load("/connect",{
+            "url": $("#url").val(),
+            "user": $("#user").val(),
+            "password": $("#password").val()
+        },function(responseTxt,statusTxt,xhr){
+            if(statusTxt=="success")
+            {
+                alert("连接成功!");
+                txt = $("#url").val();
+                $("#site").text(txt.substring(0, 38));
+                $("#currentDB").text(txt.substring(txt.length-9));
+            }
+            if(statusTxt=="error")
+                alert("Error: "+xhr.status+": "+xhr.statusText);
+        });
+    }
+
+    function execute(){
+        alert("确定查询吗？操作可能需要几秒钟");
+        $(".resultPanel").load("\query",{
+            "sql":$(".textArea").val()
+        },function(responseTxt,statusTxt,xhr){
+            if(statusTxt=="success"){
+                alert("查询成功");
+            }
+            if(xhr.status==202){
+                alert("连接已过期失效，请重新连接");
+            }
+            if(statusTxt=="error")
+                alert("Error: "+xhr.status+": "+xhr.statusText);
+        });
+    }
+
+</script>
+<script>
+	$("#sqlInput").setTextareaCount({
+		width: "30px",
+		bgColor: "#f1f1f1",
+		color: "#4169e1",
+		display: "inline-block"
+	});
+</script>
+
+</body>
+</html>
