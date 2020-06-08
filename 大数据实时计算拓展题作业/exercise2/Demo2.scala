@@ -1,7 +1,6 @@
 import java.util.{Properties, UUID}
 
-import scala.util.parsing.json.{JSON}
-
+import scala.util.parsing.json.JSON
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.streaming.api.scala.function.ProcessAllWindowFunction
@@ -10,6 +9,8 @@ import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010
 import org.apache.flink.util.Collector
+
+import scala.collection.mutable
 
 
 
@@ -49,8 +50,20 @@ object Demo2 {
       .windowAll(TumblingProcessingTimeWindows.of(Time.seconds(30)))
       .process(new ProcessAllWindowFunction[WordWithCount,WordWithCount,TimeWindow] {
         override def process(context: Context, elements: Iterable[WordWithCount], out: Collector[WordWithCount]): Unit = {
-            val sortedList = elements.toList.sortBy(_.count)
-            sortedList.take(5).foreach(println)
+          val set = new mutable.HashSet[WordWithCount]{}
+          for(wordCount <- elements){
+            if(set.contains(wordCount)){
+              set.remove(wordCount)
+              set.add(new WordWithCount(wordCount.word,wordCount.count + 1))
+            }else{
+              set.add(wordCount)
+            }
+          }
+
+          val sortSet = set.toList.sortBy(_.count)
+          println(sortSet.length)
+          sortSet.reverse.take(5).foreach(println)
+          for(wordCount <- sortSet)  out.collect(wordCount)
         }
       })
     env.execute()
