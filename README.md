@@ -1,5 +1,15 @@
 # BigDataTraining-金能征
 code and summary for course "Big Data Training"
+## data:2020/6/5
+### 1.今日成果
+(1)完成了大数据实时计算拓展作业
+
+(2)学习了flink计算框架的基础只是
+
+### 2.问题及解决
+(1) 遇到json字符串无法解析为json对象
+
+更换主题即可
 
 
 ## data:2020/6/5
