@@ -1,5 +1,14 @@
 # BigDataTraining-金能征
 code and summary for course "Big Data Training"
+## date:2020/6/10
+### 1.今日成果
+(1) 回顾了pandas_profiling的使用，从前年少无知，做数据挖掘实验的时候苦于不能很好的可视化数据，在挖掘过程遇到了很多的问题。今后会对pandas作进一步的学习。
+
+(2)深入了解了集成学习方法
+目前的继承学习方法大致可以分为两类，即个体学习器间存在强依赖关系、必须串行生成的序列化方法，以及个体学习器间不存在强以来关系、棵同时生成的并行化方法；前者的代表是Boosting，后者的代表是Bagging和“随机森林”(random forest)。
+
+### 2.问题与解决
+暂无
 
 
 ## date:2020/6/9
