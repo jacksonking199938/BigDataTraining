@@ -1,11 +1,51 @@
 # BigDataTraining-金能征
 code and summary for course "Big Data Training"
+## date:2020/6/11
+### 1.今日成果
+(1)今天完成了大数据实时计算大作业
+(2)深入学习率flink的window函数
+
+### 2.window函数
+flink的window函数一共有Thumbing Windows、Sliding Windows、和Session Windows三种，第一种滚动窗口、窗口和窗口之间不重合，而滑动窗口的重合区域将会有window size-window slide决定。会话窗口分配器按活动会话对元素进行分组。 与滚动窗口和滑动窗口相比，会话窗口不重叠且没有固定的开始和结束时间。 相反，当会话窗口在一定时间段内未接收到元素时，即在发生不活动间隙时，它将关闭。 会话窗口分配器可以配置有静态会话间隔，也可以配置有会话间隔提取器功能，该功能定义不活动的时间长度。 当此时间段到期时，当前会话将关闭，随后的元素将分配给新的会话窗口。
+
+### 3.问题及解决
+问题：遇到用JsonValue的方法解析流报错
+解决：
+原数据中可能有格式不匹配的数据，自己使用map方法实现Json解析。
+
+
+## date:2020/6/11
+### 1.今日成果
+(1)今天开始大数据实时计算大作业，完成了从S3生产数据到Kafka。
+
+(2)学习了flink的datastream的相关API
+
+### 2.Datastream的keyBy函数
+在逻辑上将流划分为不相交的分区。具有相同键的所有记录被分配到相同的分区。在内部，keyBy()是通过哈希分区实现的。
+
+这个转换返回一个KeyedStream。
+```
+dataStream.keyBy("someKey") // Key by field "someKey"
+dataStream.keyBy(0) // Key by the first element of a Tuple
+```
+keyBy后面通常跟一个window窗口函数
+```
+dataStream.keyBy(0).window(TumblingEventTimeWindows.of(Time.seconds(5))); // Last 5 seconds of data
+```
+每一个keyedStream在某个时长内对应一个窗口，可对窗口内的数据进行处理计算。
+
+### 3.问题及解决
+问题：遇到很多莫名的type mismatch问题
+
+解决：对于这些报错，很多是因为对API不熟悉导致的，另外一些是导错包的问题，因为flink包的一个方法有很多种实现，不同的实现版本的参数要求是不同的。所以有些坑。
+
+
 ## date:2020/6/10
 ### 1.今日成果
 (1) 回顾了pandas_profiling的使用，从前年少无知，做数据挖掘实验的时候苦于不能很好的可视化数据，在挖掘过程遇到了很多的问题。今后会对pandas作进一步的学习。
 
 (2)深入了解了集成学习方法
-目前的继承学习方法大致可以分为两类，即个体学习器间存在强依赖关系、必须串行生成的序列化方法，以及个体学习器间不存在强以来关系、棵同时生成的并行化方法；前者的代表是Boosting，后者的代表是Bagging和“随机森林”(random forest)。
+目前的集成学习方法大致可以分为两类，即个体学习器间存在强依赖关系、必须串行生成的序列化方法，以及个体学习器间不存在强以来关系、棵同时生成的并行化方法；前者的代表是Boosting，后者的代表是Bagging和“随机森林”(random forest)。
 
 ### 2.问题与解决
 暂无
