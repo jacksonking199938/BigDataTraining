@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="user29@bigdata28.depts.bingosoft.net:29243" autoUploadExternalChanges="true">
+    <serverData>
+      <paths name="ubuntu@134.175.42.33:22">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="user29@bigdata28.depts.bingosoft.net:29243">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/user29/s3data/scut_practice" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>
