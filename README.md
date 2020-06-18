@@ -1,7 +1,131 @@
 # BigDataTraining-金能征
 code and summary for course "Big Data Training"
+## date:2020/6/18
+### 1.今日成果
+(1)今天继续学习了pandas中的dataframe
 
-## date:2020/6/15
+### 2.DataFrame
+DataFrame是一个带有标签的2维数据结构，其中的列可能具有不同的类型。您可以将其看作电子表格或SQL表，或一系列对象的dict。它通常是最常用的panda对象。与Series一样，DataFrame接受许多不同类型的输入：
+
+Dict of 1D ndarrays, lists, dicts, or Series
+
+2-D numpy.ndarray
+
+Structured or record ndarray
+
+A Series
+
+Another DataFrame
+
+(1)DateFrame的初始化
+
+i.通过字典
+
+```python
+In [37]: d = {'one': pd.Series([1., 2., 3.], index=['a', 'b', 'c']),
+       'two': pd.Series([1., 2., 3., 4.], index=['a', 'b', 'c', 'd'])}
+In [38]: df = pd.DataFrame(d)
+
+In [39]: df
+Out[39]: 
+   one  two
+a  1.0  1.0
+b  2.0  2.0
+c  3.0  3.0
+d  NaN  4.0
+
+```
+ii.从结构化数组
+```python
+In [47]: data = np.zeros((2, ), dtype=[('A', 'i4'), ('B', 'f4'), ('C', 'a10')])
+
+In [48]: data[:] = [(1, 2., 'Hello'), (2, 3., "World")]
+
+In [49]: pd.DataFrame(data)
+Out[49]: 
+   A    B         C
+0  1  2.0  b'Hello'
+1  2  3.0  b'World'
+```
+(2)dataframe的增删查改
+i.增加
+```python
+df['one_trunc'] = df['one'][:2]
+//直接赋值
+
+df.insert(1, 'bar', df['one'])
+//把数据df['one']插入到下标为1的列，标签为’bar‘
+```
+
+ii.删除,以下两种都可以
+```python
+In [65]: del df['two']
+
+In [66]: three = df.pop('three')
+```
+iii.查和改
+
+|Operation|Syntax|Result|
+:---:|:----:|:----:
+Select column|df[col]|Series
+Select row by label|df.loc[label]|Series
+Select row by integer location|df.iloc[loc]|Series
+Slice rows|df[5:10]|DataFrame
+Select rows by boolean vector|df[bool_vec]|DataFrame
+
+```python
+In [82]: df.iloc[2]
+Out[82]: 
+one             3
+bar             3
+flag         True
+foo           bar
+one_trunc     NaN
+Name: c, dtype: object
+```
+
+
+####
+## date:2020/6/17
+### 1.今日成果
+(1)今天学习了pandas关于数据结构的部分
+
+### 2.pandas中的series
+Series是一维带标签的数组，可以容纳任何数据类型(整数、字符串、浮点数、Python对象等)。axis标签统称为索引。创建系列的基本方法是调用
+```
+s = pd.Series(data, index=index)
+```
+比如有以下例子：
+```python
+In [3]: s = pd.Series(np.random.randn(5), index=['a', 'b', 'c', 'd', 'e'])
+
+In [4]: s
+Out[4]: 
+a    0.469112
+b   -0.282863
+c   -1.509059
+d   -1.135632
+e    1.212112
+dtype: float64
+```
+传入的数据除了是数组之外，还可以是字典类型的数据。事实上，series跟ndarray十分的相似。它也可以通过下标直接访问数据，如s[0]。如果像把series转化成数组，我们可以像下面这样做。
+
+```python
+s.array
+//把series转换成PandasArray类型
+s.to_numpy()
+//把Series转换成Numpy数组类型
+```
+
+series除了跟ndarray非常相似之外，它的某些操作方式也跟字典如出一辙：如我们访问某一个下标的数据，也可以是s['a'].
+
+最后，Series有一个name属性，可以指定它的名字。
+```
+ s = pd.Series(np.random.randn(5), name='something')
+```
+
+
+## date:2020/6/16
 ### 1.今日成果
 (1)今天了解了数据治理的体系架构
 
