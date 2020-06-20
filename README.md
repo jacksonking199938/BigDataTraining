@@ -1,5 +1,21 @@
 # BigDataTraining-金能征
 code and summary for course "Big Data Training"
+
+## date:2020/6/19
+### 1.今日成果
+(1)开始完成大数据人工智能大作业
+(2)学习了lasso、ridge、elasticNet、xgBoost等回归算法。
+
+### 2.lasso、ridge、elasticNet、XGBoost
+(1)lasso回归即加上了L1正则化项的线性回归
+
+(2)ridge回归、岭回归即加上了L2正则化项的线性回归
+
+(3)ElasticNet即引入L1-L2正则化项的线性回归
+
+(4)XGBoost即extreme GBDT，是一种在损失函数中加入正则化项的梯度提升决策树，是回归树的一种。
+
+
 ## date:2020/6/18
 ### 1.今日成果
 (1)今天继续学习了pandas中的dataframe
